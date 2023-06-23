@@ -25,6 +25,7 @@ Configuring Cluster Monitoring is optional. If the config does not exist or is e
 * [DedicatedServiceMonitors](#dedicatedservicemonitors)
 * [K8sPrometheusAdapter](#k8sprometheusadapter)
 * [KubeStateMetricsConfig](#kubestatemetricsconfig)
+* [MetricsServer](#metricsserver)
 * [MonitoringPluginConfig](#monitoringpluginconfig)
 * [NodeExporterCollectorBuddyInfoConfig](#nodeexportercollectorbuddyinfoconfig)
 * [NodeExporterCollectorConfig](#nodeexportercollectorconfig)
@@ -124,6 +125,8 @@ The `ClusterMonitoringConfiguration` resource defines settings that customize th
 | -------- | ---- | ----------- |
 | alertmanagerMain | *[AlertmanagerMainConfig](#alertmanagermainconfig) | `AlertmanagerMainConfig` defines settings for the Alertmanager component in the `openshift-monitoring` namespace. |
 | enableUserWorkload | *bool | `UserWorkloadEnabled` is a Boolean flag that enables monitoring for user-defined projects. |
+| enableMetricsServer | *bool | `MetricsServerEnabled` is a Boolean flag that enables metrics-server. |
+| metricsServer | *[MetricsServer](#metricsserver) | `MetricsServer` defines settings for the MetricsServer component. |
 | k8sPrometheusAdapter | *[K8sPrometheusAdapter](#k8sprometheusadapter) | `K8sPrometheusAdapter` defines settings for the Prometheus Adapter component. |
 | kubeStateMetrics | *[KubeStateMetricsConfig](#kubestatemetricsconfig) | `KubeStateMetricsConfig` defines settings for the `kube-state-metrics` agent. |
 | prometheusK8s | *[PrometheusK8sConfig](#prometheusk8sconfig) | `PrometheusK8sConfig` defines settings for the Prometheus component. |
@@ -182,6 +185,23 @@ The `KubeStateMetricsConfig` resource defines settings for the `kube-state-metri
 | -------- | ---- | ----------- |
 | nodeSelector | map[string]string | Defines the nodes on which the pods are scheduled. |
 | tolerations | [][v1.Toleration](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#toleration-v1-core) | Defines tolerations for the pods. |
+
+[Back to TOC](#table-of-contents)
+
+## MetricsServer
+
+#### Description
+
+The `MetricsServer` resource defines settings for the MetricsServer component.
+
+
+<em>appears in: [ClusterMonitoringConfiguration](#clustermonitoringconfiguration)</em>
+
+| Property | Type | Description |
+| -------- | ---- | ----------- |
+| nodeSelector | map[string]string | Defines the nodes on which the pods are scheduled. |
+| tolerations | [][v1.Toleration](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.26/#toleration-v1-core) | Defines tolerations for the pods. |
+| resources | *[v1.ResourceRequirements](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.26/#resourcerequirements-v1-core) | Defines resource requests and limits for the Prometheus container. |
 
 [Back to TOC](#table-of-contents)
 

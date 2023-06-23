@@ -19,6 +19,10 @@ The `ClusterMonitoringConfiguration` resource defines settings that customize th
 
 |enableUserWorkload|*bool|`UserWorkloadEnabled` is a Boolean flag that enables monitoring for user-defined projects.
 
+|enableMetricsServer|*bool|`MetricsServerEnabled` is a Boolean flag that enables metrics-server.
+
+|metricsServer|*link:metricsserver.adoc[MetricsServer]|`MetricsServer` defines settings for the MetricsServer component.
+
 |k8sPrometheusAdapter|*link:k8sprometheusadapter.adoc[K8sPrometheusAdapter]|`K8sPrometheusAdapter` defines settings for the Prometheus Adapter component.
 
 |kubeStateMetrics|*link:kubestatemetricsconfig.adoc[KubeStateMetricsConfig]|`KubeStateMetricsConfig` defines settings for the `kube-state-metrics` agent.

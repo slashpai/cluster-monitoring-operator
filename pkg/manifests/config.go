@@ -223,6 +223,10 @@ func NewConfig(content io.Reader, tp bool) (*Config, error) {
 		return nil, errors.Wrap(ErrConfigValidation, fmt.Sprintf(`%q is not supported, supported collection profiles are: %q`, c.ClusterMonitoringConfiguration.PrometheusK8sConfig.CollectionProfile, SupportedCollectionProfiles.String()))
 	}
 
+	if c.ClusterMonitoringConfiguration.MetricsServerEnabled != nil && !tp {
+		return nil, errors.Wrap(ErrConfigValidation, "enableMetricsServer is a TechPreview feature, to be able to deploy it please enable TechPreview")
+	}
+
 	return res, nil
 }
 

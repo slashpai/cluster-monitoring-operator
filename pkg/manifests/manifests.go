@@ -177,6 +177,18 @@ var (
 	PrometheusUserWorkloadConfigMap                   = "prometheus-user-workload/config-map.yaml"
 	PrometheusUserWorkloadFederateRoute               = "prometheus-user-workload/federate-route.yaml"
 
+	MetricsServerAPIService                         = "metrics-server/api-service.yaml"
+	MetricsServerServiceAccount                     = "metrics-server/service-account.yaml"
+	MetricsServerClusterRole                        = "metrics-server/cluster-role.yaml"
+	MetricsServerClusterRoleBinding                 = "metrics-server/cluster-role-binding.yaml"
+	MetricsServerClusterRoleAggregatedMetricsReader = "metrics-server/cluster-role-aggregated-metrics-reader.yaml"
+	MetricsServerClusterRoleBindingAuthDelegator    = "metrics-server/cluster-role-binding-auth-delegator.yaml"
+	MetricsServerRoleBindingAuthReader              = "metrics-server/role-binding-auth-reader.yaml"
+	MetricsServerDeployment                         = "metrics-server/deployment.yaml"
+	MetricsServerService                            = "metrics-server/service.yaml"
+	MetricsServerServiceMonitor                     = "metrics-server/service-monitor.yaml"
+	MetricsServerPodDisruptionBudget                = "metrics-server/pod-disruption-budget.yaml"
+
 	PrometheusAdapterAPIService                         = "prometheus-adapter/api-service.yaml"
 	PrometheusAdapterClusterRole                        = "prometheus-adapter/cluster-role.yaml"
 	PrometheusAdapterClusterRoleBinding                 = "prometheus-adapter/cluster-role-binding.yaml"
