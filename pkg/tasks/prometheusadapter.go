@@ -30,6 +30,16 @@ func NewPrometheusAdapterTask(ctx context.Context, namespace string, client *cli
 }
 
 func (t *PrometheusAdapterTask) Run(ctx context.Context) error {
+	if t.config.ClusterMonitoringConfiguration.MetricsServerConfig != nil {
+		if !*t.config.ClusterMonitoringConfiguration.MetricsServerConfig.Enabled {
+			t.create(ctx)
+		}
+	}
+
+	return nil
+}
+
+func (t *PrometheusAdapterTask) create(ctx context.Context) error {
 	{
 		cr, err := t.factory.PrometheusAdapterClusterRole()
 		if err != nil {
@@ -257,7 +267,6 @@ func (t *PrometheusAdapterTask) Run(ctx context.Context) error {
 			return errors.Wrap(err, "reconciling PrometheusAdapter APIService failed")
 		}
 	}
-
 	return nil
 }
 

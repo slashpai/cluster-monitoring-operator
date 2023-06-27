@@ -772,6 +772,15 @@ func (c *Client) DeletePodDisruptionBudget(ctx context.Context, pdb *policyv1.Po
 	return err
 }
 
+func (c *Client) DeleteAPIService(ctx context.Context, apiService *apiregistrationv1.APIService) error {
+	err := c.aggclient.ApiregistrationV1().APIServices().Delete(ctx, apiService.GetName(), metav1.DeleteOptions{})
+	if apierrors.IsNotFound(err) {
+		return nil
+	}
+
+	return err
+}
+
 func (c *Client) DeletePrometheus(ctx context.Context, p *monv1.Prometheus) error {
 	pclient := c.mclient.MonitoringV1().Prometheuses(p.GetNamespace())
 

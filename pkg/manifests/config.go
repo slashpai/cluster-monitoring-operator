@@ -125,6 +125,7 @@ func (c Config) GetThanosRulerAlertmanagerConfigs() []AdditionalAlertmanagerConf
 }
 
 type Images struct {
+	MetricsServer                      string
 	K8sPrometheusAdapter               string
 	PromLabelProxy                     string
 	PrometheusOperatorAdmissionWebhook string
@@ -223,8 +224,8 @@ func NewConfig(content io.Reader, tp bool) (*Config, error) {
 		return nil, errors.Wrap(ErrConfigValidation, fmt.Sprintf(`%q is not supported, supported collection profiles are: %q`, c.ClusterMonitoringConfiguration.PrometheusK8sConfig.CollectionProfile, SupportedCollectionProfiles.String()))
 	}
 
-	if c.ClusterMonitoringConfiguration.MetricsServerEnabled != nil && !tp {
-		return nil, errors.Wrap(ErrConfigValidation, "enableMetricsServer is a TechPreview feature, to be able to deploy it please enable TechPreview")
+	if c.ClusterMonitoringConfiguration.MetricsServerConfig != nil && !tp {
+		return nil, errors.Wrap(ErrConfigValidation, "Metrics Server is a TechPreview feature, to be able to deploy it please enable TechPreview")
 	}
 
 	return res, nil
@@ -325,6 +326,9 @@ func (c *Config) SetImages(images map[string]string) {
 	c.Images.OpenShiftStateMetrics = images["openshift-state-metrics"]
 	c.Images.Thanos = images["thanos"]
 	c.Images.MonitoringPlugin = images["monitoring-plugin"]
+	// Till image is updated in CVO
+	// c.Images.MetricsServer = images["metrics-server"]
+	c.Images.MetricsServer = "registry.k8s.io/metrics-server/metrics-server:v0.6.3"
 }
 
 func (c *Config) SetTelemetryMatches(matches []string) {

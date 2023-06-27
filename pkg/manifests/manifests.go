@@ -1801,6 +1801,76 @@ func (f *Factory) PrometheusUserWorkloadPrometheusServiceMonitor() (*monv1.Servi
 	return f.NewServiceMonitor(f.assets.MustNewAssetReader(PrometheusUserWorkloadPrometheusServiceMonitor))
 }
 
+func (f *Factory) MetricsServerServiceAccount() (*v1.ServiceAccount, error) {
+	return f.NewServiceAccount(f.assets.MustNewAssetReader(MetricsServerServiceAccount))
+}
+
+func (f *Factory) MetricsServerClusterRole() (*rbacv1.ClusterRole, error) {
+	return f.NewClusterRole(f.assets.MustNewAssetReader(MetricsServerClusterRole))
+}
+
+func (f *Factory) MetricsServerClusterRoleBinding() (*rbacv1.ClusterRoleBinding, error) {
+	return f.NewClusterRoleBinding(f.assets.MustNewAssetReader(MetricsServerClusterRoleBinding))
+}
+
+func (f *Factory) MetricsServerClusterRoleAggregatedMetricsReader() (*rbacv1.ClusterRole, error) {
+	return f.NewClusterRole(f.assets.MustNewAssetReader(MetricsServerClusterRoleAggregatedMetricsReader))
+}
+
+func (f *Factory) MetricsServerClusterRoleBindingAuthDelegator() (*rbacv1.ClusterRoleBinding, error) {
+	return f.NewClusterRoleBinding(f.assets.MustNewAssetReader(MetricsServerClusterRoleBindingAuthDelegator))
+}
+
+func (f *Factory) MetricsServerRoleBindingAuthReader() (*rbacv1.RoleBinding, error) {
+	return f.NewRoleBinding(f.assets.MustNewAssetReader(MetricsServerRoleBindingAuthReader))
+}
+
+func (f *Factory) MetricsServerDeployment() (*appsv1.Deployment, error) {
+	d, err := f.NewDeployment(f.assets.MustNewAssetReader(MetricsServerDeployment))
+	if err != nil {
+		return nil, err
+	}
+	for i, container := range d.Spec.Template.Spec.Containers {
+		switch container.Name {
+		case "metrics-server":
+			d.Spec.Template.Spec.Containers[i].Image = f.config.Images.MetricsServer
+
+			if f.config.ClusterMonitoringConfiguration.MetricsServerConfig != nil {
+				if f.config.ClusterMonitoringConfiguration.MetricsServerConfig.Resources != nil {
+					d.Spec.Template.Spec.Containers[i].Resources = *f.config.ClusterMonitoringConfiguration.MetricsServerConfig.Resources
+				}
+
+				if f.config.ClusterMonitoringConfiguration.MetricsServerConfig.NodeSelector != nil {
+					d.Spec.Template.Spec.NodeSelector = f.config.ClusterMonitoringConfiguration.MetricsServerConfig.NodeSelector
+				}
+
+				if f.config.ClusterMonitoringConfiguration.MetricsServerConfig.Tolerations != nil {
+					d.Spec.Template.Spec.Tolerations = f.config.ClusterMonitoringConfiguration.MetricsServerConfig.Tolerations
+				}
+			}
+
+		}
+	}
+
+	return d, nil
+}
+
+func (f *Factory) MetricsServerPodDisruptionBudget() (*policyv1.PodDisruptionBudget, error) {
+	return f.NewPodDisruptionBudget(f.assets.MustNewAssetReader(MetricsServerPodDisruptionBudget))
+}
+
+func (f *Factory) MetricsServerService() (*v1.Service, error) {
+	return f.NewService(f.assets.MustNewAssetReader(MetricsServerService))
+}
+
+func (f *Factory) MetricsServerServiceMonitor() (*monv1.ServiceMonitor, error) {
+	return f.NewServiceMonitor(f.assets.MustNewAssetReader(MetricsServerServiceMonitor))
+}
+
+func (f *Factory) MetricsServerAPIService() (*apiregistrationv1.APIService, error) {
+	return f.NewAPIService(f.assets.MustNewAssetReader(MetricsServerAPIService))
+}
+
 func (f *Factory) PrometheusAdapterClusterRole() (*rbacv1.ClusterRole, error) {
 	return f.NewClusterRole(f.assets.MustNewAssetReader(PrometheusAdapterClusterRole))
 }

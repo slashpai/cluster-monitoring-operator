@@ -43,10 +43,8 @@ type ClusterMonitoringConfiguration struct {
 	UserWorkloadEnabled *bool `json:"enableUserWorkload,omitempty"`
 	// OmitFromDoc
 	HTTPConfig *HTTPConfig `json:"http,omitempty"`
-	// `MetricsServerEnabled` is a Boolean flag that enables metrics-server.
-	MetricsServerEnabled *bool `json:"enableMetricsServer,omitempty"`
 	// `MetricsServer` defines settings for the MetricsServer component.
-	MetricsServer *MetricsServer `json:"metricsServer,omitempty"`
+	MetricsServerConfig *MetricsServerConfig `json:"metricsServer,omitempty"`
 	// `K8sPrometheusAdapter` defines settings for the Prometheus Adapter component.
 	K8sPrometheusAdapter *K8sPrometheusAdapter `json:"k8sPrometheusAdapter,omitempty"`
 	// `KubeStateMetricsConfig` defines settings for the `kube-state-metrics` agent.
@@ -105,13 +103,15 @@ type AlertmanagerMainConfig struct {
 	VolumeClaimTemplate *monv1.EmbeddedPersistentVolumeClaim `json:"volumeClaimTemplate,omitempty"`
 }
 
-// The `MetricsServer` resource defines settings for the MetricsServer component.
-type MetricsServer struct {
+// The `MetricsServerConfig` resource defines settings for the MetricsServer component.
+type MetricsServerConfig struct {
+	// `Enabled` is a Boolean flag that enables or disables metrics-server.
+	Enabled *bool `json:"enabled,omitempty"`
 	// Defines the nodes on which the pods are scheduled.
 	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
 	// Defines tolerations for the pods.
 	Tolerations []v1.Toleration `json:"tolerations,omitempty"`
-	// Defines resource requests and limits for the Prometheus container.
+	// Defines resource requests and limits for the Metrics Server container.
 	Resources *v1.ResourceRequirements `json:"resources,omitempty"`
 }
 

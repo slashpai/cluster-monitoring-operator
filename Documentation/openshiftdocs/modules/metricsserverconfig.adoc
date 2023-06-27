@@ -5,11 +5,11 @@
 	// CMO.
 	:_content-type: ASSEMBLY
 
-== MetricsServer
+== MetricsServerConfig
 
 === Description
 
-The `MetricsServer` resource defines settings for the MetricsServer component.
+The `MetricsServerConfig` resource defines settings for the MetricsServer component.
 
 
 
@@ -18,7 +18,7 @@ Appears in: link:clustermonitoringconfiguration.adoc[ClusterMonitoringConfigurat
 [options="header"]
 |===
 | Property | Type | Description 
-|enableMetricsServer|*bool|`EnableMetricsServer` is a Boolean flag that enables metrics-server.
+|enabled|*bool|`Enabled` is a Boolean flag that enables or disables metrics-server.
 
 |nodeSelector|map[string]string|Defines the nodes on which the pods are scheduled.
 
