@@ -2,6 +2,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   labels:
+    app.kubernetes.io/component: metrics-server
     app.kubernetes.io/name: metrics-server
     app.kubernetes.io/part-of: openshift-monitoring
   name: metrics-server
