@@ -135,7 +135,7 @@ function(params) {
         'app.kubernetes.io/component': 'metrics-server',
       } + cfg.commonLabels,
       annotations: {
-          'service.beta.openshift.io/serving-cert-secret-name': 'metrics-server-tls',
+        'service.beta.openshift.io/serving-cert-secret-name': 'metrics-server-tls',
       },
       name: 'metrics-server',
       namespace: cfg.namespace,
@@ -213,7 +213,7 @@ function(params) {
                 '--kubelet-client-key=/etc/tls/metrics-client-certs/tls.key',
                 '--tls-cert-file=/etc/tls/private/tls.crt',
                 '--tls-private-key-file=/etc/tls/private/tls.key',
-                '--tls-cipher-suites='+ cfg.tlsCipherSuites,
+                '--tls-cipher-suites=' + cfg.tlsCipherSuites,
               ],
               image: 'registry.k8s.io/metrics-server/metrics-server:v0.6.3',
               imagePullPolicy: 'IfNotPresent',
@@ -257,8 +257,8 @@ function(params) {
               },
               volumeMounts: [
                 {
-                mountPath: '/etc/tls/private',
-                name: 'secret-metrics-server-tls',
+                  mountPath: '/etc/tls/private',
+                  name: 'secret-metrics-server-tls',
                 },
                 {
                   mountPath: '/etc/tls/metrics-client-certs',
@@ -306,6 +306,7 @@ function(params) {
     metadata: {
       labels: {
         'app.kubernetes.io/name': 'metrics-server',
+        'app.kubernetes.io/component': 'metrics-server'
       } + cfg.commonLabels,
       name: 'metrics-server',
       namespace: cfg.namespace,
