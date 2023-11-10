@@ -167,6 +167,7 @@ type Operator struct {
 	telemetryMatches          []string
 	remoteWrite               bool
 	userWorkloadEnabled       bool
+	metricsServerEnabled      bool
 
 	lastKnowInfrastructureConfig *InfrastructureConfig
 	lastKnowProxyConfig          *ProxyConfig
@@ -244,6 +245,7 @@ func New(
 		userWorkloadConfigMapName: userWorkloadConfigMapName,
 		remoteWrite:               remoteWrite,
 		userWorkloadEnabled:       false,
+		metricsServerEnabled:      false,
 		namespace:                 namespace,
 		namespaceUserWorkload:     namespaceUserWorkload,
 		client:                    c,
@@ -416,7 +418,6 @@ func New(
 	//test
 	configInformers := configv1informers.NewSharedInformerFactory(configClient, 10*time.Minute)
 	o.informers = append(o.informers, configInformers)
-	//test
 
 	//test
 	missingVersion := "0.0.1-snapshot"
@@ -449,8 +450,8 @@ func New(
 		return nil, err
 	}
 	// read featuregate read and usage to set a variable to pass to a controller
-	gatewayAPIEnabled := featureGates.Enabled(configv1.FeatureGateGatewayAPI)
-
+	metricsServerEnabled := featureGates.Enabled(configv1.FeatureGateMetricsServer)
+	o.metricsServerEnabled = true
 	//test
 
 	// csrController runs a controller that requests a client TLS certificate
