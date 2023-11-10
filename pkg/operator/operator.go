@@ -18,19 +18,24 @@ import (
 	"context"
 	"crypto/x509/pkix"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/blang/semver/v4"
 	configv1 "github.com/openshift/api/config/v1"
+	configv1client "github.com/openshift/client-go/config/clientset/versioned"
+	configv1informers "github.com/openshift/client-go/config/informers/externalversions"
 	"github.com/openshift/cluster-monitoring-operator/pkg/alert"
 	"github.com/openshift/cluster-monitoring-operator/pkg/client"
 	"github.com/openshift/cluster-monitoring-operator/pkg/manifests"
 	"github.com/openshift/cluster-monitoring-operator/pkg/metrics"
 	cmostr "github.com/openshift/cluster-monitoring-operator/pkg/strings"
 	"github.com/openshift/cluster-monitoring-operator/pkg/tasks"
+	"github.com/openshift/library-go/pkg/operator/configobserver/featuregates"
 	"github.com/openshift/library-go/pkg/operator/csr"
 	"github.com/openshift/library-go/pkg/operator/events"
+	"github.com/opentracing/opentracing-go/log"
 	"github.com/pkg/errors"
 	certapiv1 "k8s.io/api/certificates/v1"
 	v1 "k8s.io/api/core/v1"
@@ -209,6 +214,13 @@ func New(
 		"cluster-monitoring-operator",
 		controllerRef,
 	)
+
+	// test
+	configClient, err := configv1client.NewForConfig(config)
+	if err != nil {
+		return err
+	}
+	//test
 
 	c, err := client.NewForConfig(config, version, namespace, namespaceUserWorkload, client.KubernetesClient(kclient), client.EventRecorder(eventRecorder))
 	if err != nil {
@@ -400,6 +412,46 @@ func New(
 		informers.WithNamespace(namespace),
 	)
 	o.informerFactories = append(o.informerFactories, kubeInformersOperatorNS)
+
+	//test
+	configInformers := configv1informers.NewSharedInformerFactory(configClient, 10*time.Minute)
+	o.informers = append(o.informers, configInformers)
+	//test
+
+	//test
+	missingVersion := "0.0.1-snapshot"
+	desiredVersion := missingVersion
+	if envVersion, exists := os.LookupEnv("RELEASE_VERSION"); exists {
+		desiredVersion = envVersion
+	}
+
+	// By default, this will exit(0) if the featuregates change
+	featureGateAccessor := featuregates.NewFeatureGateAccess(
+		desiredVersion, missingVersion,
+		configInformers.Config().V1().ClusterVersions(),
+		configInformers.Config().V1().FeatureGates(),
+		eventRecorder,
+	)
+	go featureGateAccessor.Run(ctx)
+	go configInformers.Start(config.Stop)
+
+	select {
+	case <-featureGateAccessor.InitialFeatureGatesObserved():
+		featureGates, _ := featureGateAccessor.CurrentFeatureGates()
+		klog.Infof("FeatureGates initialized: %v", featureGates.KnownFeatures())
+	case <-time.After(1 * time.Minute):
+		log.Error(nil, "timed out waiting for FeatureGate detection")
+		return nil, fmt.Errorf("timed out waiting for FeatureGate detection")
+	}
+
+	featureGates, err := featureGateAccessor.CurrentFeatureGates()
+	if err != nil {
+		return nil, err
+	}
+	// read featuregate read and usage to set a variable to pass to a controller
+	gatewayAPIEnabled := featureGates.Enabled(configv1.FeatureGateGatewayAPI)
+
+	//test
 
 	// csrController runs a controller that requests a client TLS certificate
 	// for Prometheus k8s. This certificate is used to authenticate against the
