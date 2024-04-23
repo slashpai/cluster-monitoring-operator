@@ -108,6 +108,19 @@ function(params) {
     ],
   },
 
+  kubeletServingCaBundle+: {
+    apiVersion: 'v1',
+    kind: 'ConfigMap',
+    metadata+: {
+      name: 'metrics-server-kubelet-serving-ca-bundle',
+      namespace: cfg.namespace,
+      annotations: {
+        'openshift.io/owning-component': 'Monitoring',
+      },
+    },
+    data: {},
+  },
+
   service: {
     apiVersion: 'v1',
     kind: 'Service',
@@ -194,8 +207,8 @@ function(params) {
                 '--kubelet-use-node-status-port',
                 '--metric-resolution=15s',
                 '--kubelet-certificate-authority=/etc/tls/kubelet-serving-ca-bundle/ca-bundle.crt',
-                '--kubelet-client-certificate=/etc/tls/metrics-client-certs/tls.crt',
-                '--kubelet-client-key=/etc/tls/metrics-client-certs/tls.key',
+                '--kubelet-client-certificate=/etc/tls/metrics-server-client-certs/tls.crt',
+                '--kubelet-client-key=/etc/tls/metrics-server-client-certs/tls.key',
                 '--tls-cert-file=/etc/tls/private/tls.crt',
                 '--tls-private-key-file=/etc/tls/private/tls.key',
                 '--tls-cipher-suites=' + cfg.tlsCipherSuites,
@@ -248,12 +261,12 @@ function(params) {
                   name: 'secret-metrics-server-tls',
                 },
                 {
-                  mountPath: '/etc/tls/metrics-client-certs',
-                  name: 'secret-metrics-client-certs',
+                  mountPath: '/etc/tls/metrics-server-client-certs',
+                  name: 'secret-metrics-server-client-certs',
                 },
                 {
                   mountPath: '/etc/tls/kubelet-serving-ca-bundle',
-                  name: 'configmap-kubelet-serving-ca-bundle',
+                  name: 'configmap-metrics-server-kubelet-serving-ca-bundle',
                 },
               ],
             },
@@ -265,9 +278,9 @@ function(params) {
           serviceAccountName: 'metrics-server',
           volumes: [
             {
-              name: 'secret-metrics-client-certs',
+              name: 'secret-metrics-server-client-certs',
               secret: {
-                secretName: 'metrics-client-certs',
+                secretName: 'metrics-server-client-certs',
               },
             },
             {
@@ -278,9 +291,9 @@ function(params) {
             },
             {
               configMap: {
-                name: 'kubelet-serving-ca-bundle',
+                name: 'metrics-server-kubelet-serving-ca-bundle',
               },
-              name: 'configmap-kubelet-serving-ca-bundle',
+              name: 'configmap-metrics-server-kubelet-serving-ca-bundle',
             },
           ],
         },
