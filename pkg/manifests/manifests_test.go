@@ -1643,6 +1643,7 @@ func TestPrometheusUserWorkloadConfiguration(t *testing.T) {
 	c := NewDefaultConfig()
 
 	uwc, err := NewUserConfigFromString(`prometheus:
+  scrapeInterval: 15s
   resources:
     requests:
       cpu: 100m
@@ -1668,6 +1669,10 @@ func TestPrometheusUserWorkloadConfiguration(t *testing.T) {
 	)
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if p.Spec.ScrapeInterval != "15s" {
+		t.Fatal("Prometheus UWM scrapeInterval not configured correctly")
 	}
 
 	if p.Spec.TopologySpreadConstraints[0].MaxSkew != 1 {
